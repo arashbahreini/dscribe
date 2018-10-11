@@ -1,8 +1,9 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {TypeBase} from '../../metadata/entity-base';
-import {MetadataBasicInfoModel} from '../../metadata/metadata-basic-info-model';
-import {MetadataManagementApiClient} from '../metadata-management-api-client';
+import { Message } from 'primeng/components/common/message';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { TypeBase } from '../../metadata/entity-base';
+import { MetadataBasicInfoModel } from '../../metadata/metadata-basic-info-model';
+import { MetadataManagementApiClient } from '../metadata-management-api-client';
 
 @Component({
 	selector: 'dscribe-add-n-edit-entity',
@@ -12,7 +13,8 @@ import {MetadataManagementApiClient} from '../metadata-management-api-client';
 export class AddNEditEntityComponent implements OnInit {
 
 	entity: TypeBase;
-
+	msgs: Message[] = [];
+	isLoading: boolean;
 	constructor(
 		private dialogRef: MatDialogRef<AddNEditEntityComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: AddNEditEntityComponentData,
@@ -24,12 +26,18 @@ export class AddNEditEntityComponent implements OnInit {
 	}
 
 	save() {
+		this.isLoading = true;
 		const request = (this.data.isNew) ?
 			this.apiClient.addEntity(this.entity) :
 			this.apiClient.editEntity(this.entity);
-		request.subscribe(data => {
-			this.dialogRef.close('saved');
-		});
+		request.subscribe(
+			() => {
+				this.dialogRef.close('saved');
+				this.isLoading = false;
+			}, (errors: any) => {
+				this.isLoading = false;
+				this.msgs = errors;
+			});
 	}
 
 	cancel() {

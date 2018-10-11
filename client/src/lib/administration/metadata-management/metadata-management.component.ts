@@ -157,6 +157,7 @@ export class MetadataManagementComponent implements OnInit {
 	openAddNEditEntityDialog(instance: any, isNew: boolean) {
 		const dialogRef = this.dialog.open(AddNEditEntityComponent, {
 			width: '800px',
+			disableClose: true,
 			data: new AddNEditEntityComponentData(instance, isNew, this.basicInfo)
 		});
 		dialogRef.afterClosed().subscribe(
